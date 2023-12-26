@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 func main() {
 	config := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers": os.Getenv("KAFKA_HOST"),
 		"group.id":          "golang",
 		"auto.offset.reset": "earliest",
 	}
@@ -20,7 +21,8 @@ func main() {
 	}
 	defer consumer.Close()
 
-	fmt.Println("Consumer started")
+	// Wait for kafka is ready
+	time.Sleep(5 * time.Second)
 
 	err = consumer.Subscribe("helloworld", nil)
 	if err != nil {

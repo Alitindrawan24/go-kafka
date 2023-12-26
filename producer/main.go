@@ -2,14 +2,16 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"strconv"
+	"time"
 
-	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 )
 
 func main() {
 	config := &kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
+		"bootstrap.servers": os.Getenv("KAFKA_HOST"),
 	}
 
 	producer, err := kafka.NewProducer(config)
@@ -17,6 +19,9 @@ func main() {
 		panic(err)
 	}
 	defer producer.Close()
+
+	// Wait for kafka is ready
+	time.Sleep(5 * time.Second)
 
 	fmt.Println("Producer started")
 
